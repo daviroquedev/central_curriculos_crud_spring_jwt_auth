@@ -1,7 +1,6 @@
 package com.curriculosatt.diamond.demo.domain.curriculos.entity;
 
-import com.curriculosatt.diamond.demo.domain.curriculos.Candidatos.CandidatoRole;
-import com.curriculosatt.diamond.demo.domain.curriculos.entity.Vaga;
+import com.curriculosatt.diamond.demo.domain.curriculos.enums.CandidatoRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;

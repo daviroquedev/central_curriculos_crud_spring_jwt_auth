@@ -1,4 +1,4 @@
-package com.curriculosatt.diamond.demo.domain.curriculos.Candidatos;
+package com.curriculosatt.diamond.demo.domain.curriculos.enums;
 
 public enum CandidatoRole {
     ADMIN("admin"),

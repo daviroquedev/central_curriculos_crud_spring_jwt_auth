@@ -1,6 +1,7 @@
 package com.curriculosatt.diamond.demo.domain.curriculos.dto;
 
-import com.curriculosatt.diamond.demo.domain.curriculos.Candidatos.CandidatoRole;
+import com.curriculosatt.diamond.demo.domain.curriculos.enums.CandidatoRole;
+import com.curriculosatt.diamond.demo.domain.curriculos.enums.Escolaridade;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -18,7 +19,7 @@ public record CandidatoDTO(Long id,
                                @Email
                                String email,
                                String telefone,
-                               String escolaridade,
+                               Escolaridade escolaridade,
                                String funcao,
                                List<String> listaCompetencias,
                                String statusSolicitacao,

@@ -1,4 +1,4 @@
-package com.curriculosatt.diamond.demo.domain.curriculos;
+package com.curriculosatt.diamond.demo.domain.curriculos.entity;
 
 import com.curriculosatt.diamond.demo.domain.curriculos.entity.Candidato;
 import jakarta.persistence.*;

@@ -11,12 +11,14 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Date;
 
 @Service
 public class TokenService {
 
     @Value("${api.security.token.secret}")
     private String secret;
+
     public String generateToken(Candidato candidato) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -24,6 +26,10 @@ public class TokenService {
                     .withIssuer("auth-api")
                     .withSubject(candidato.getCpf())
                     .withExpiresAt(generateExpirationDate())
+                    .withClaim("nome", candidato.getNome()) // Adicionando informações adicionais do candidato
+                    .withClaim("email", candidato.getEmail())
+                    .withClaim("cpf", candidato.getCpf())
+                    .withClaim("role", candidato.getRole().toString()) // Incluindo a role
                     .sign(algorithm);
             return token;
         } catch (JWTCreationException e) {
@@ -31,7 +37,7 @@ public class TokenService {
         }
     }
 
-    String validateToken(String token) {
+    public String validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
@@ -40,11 +46,11 @@ public class TokenService {
                     .verify(token)
                     .getSubject();
         } catch (JWTVerificationException e) {
-            throw new RuntimeException("Token inválido", e); // Lidando com a exceção de forma adequada
+            throw new RuntimeException("Token inválido", e);
         }
     }
 
-    private Instant generateExpirationDate() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+    private Date generateExpirationDate() {
+        return Date.from(LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00")));
     }
 }

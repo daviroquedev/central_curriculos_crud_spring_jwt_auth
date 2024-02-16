@@ -1,40 +1,82 @@
 package com.curriculosatt.diamond.demo.domain.curriculos.controllers;
 
-import com.curriculosatt.diamond.demo.domain.curriculos.entity.Candidato;
+import com.curriculosatt.diamond.demo.domain.curriculos.dto.VagaDTO;
 import com.curriculosatt.diamond.demo.domain.curriculos.entity.Vaga;
-import com.curriculosatt.diamond.demo.domain.curriculos.VagaNotFoundException;
-import com.curriculosatt.diamond.demo.domain.curriculos.VagaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.curriculosatt.diamond.demo.domain.curriculos.infra.exceptions.ErrorResponse;
+import com.curriculosatt.diamond.demo.domain.curriculos.infra.exceptions.VagaNotFoundException;
+import com.curriculosatt.diamond.demo.domain.curriculos.repository.CandidatoRepository;
+import com.curriculosatt.diamond.demo.domain.curriculos.repository.VagaRepository;
+import com.curriculosatt.diamond.demo.domain.curriculos.services.VagaService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/vagas")
+@RequiredArgsConstructor
 public class VagaController {
 
-    @Autowired
-    private VagaRepository vagaRepository;
+
+    private final VagaRepository vagaRepository;
+    private final CandidatoRepository candidatoRepository;
+    private final VagaService vagaService;
 
     @PostMapping
-    public ResponseEntity<Vaga> criarVaga(@RequestBody Vaga vaga) {
-        Vaga novaVaga = vagaRepository.save(vaga);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novaVaga);
+    public ResponseEntity<VagaDTO> criarVaga(@RequestBody VagaDTO vagaDTO) {
+        Vaga novaVaga = new Vaga();
+        novaVaga.setTituloVaga(vagaDTO.getTituloVaga());
+        novaVaga.setDataInicio(vagaDTO.getDataInicio());
+        novaVaga.setDataExpiracao(vagaDTO.getDataExpiracao());
+        novaVaga.setDescricaoVaga(vagaDTO.getDescricaoVaga());
+        novaVaga.setSalario(vagaDTO.getSalario());
+        novaVaga.setTotalDeCandidatosAplicado(vagaDTO.getTotalDeCandidatosAplicado());
+
+        // Salvar a nova vaga
+        novaVaga = vagaRepository.save(novaVaga);
+
+        // Converter a vaga recém-criada para VagaDTO
+        VagaDTO novaVagaDTO = convertToDTO(novaVaga);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(novaVagaDTO);
     }
 
     @GetMapping
-    public ResponseEntity<List<Vaga>> listarVagas() {
+    public ResponseEntity<List<VagaDTO>> listarVagas() {
         List<Vaga> vagas = vagaRepository.findAll();
-        return ResponseEntity.ok(vagas);
+        List<VagaDTO> vagasDTO = vagas.stream().map(this::convertToDTO).collect(Collectors.toList());
+        return ResponseEntity.ok(vagasDTO);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Vaga> buscarVagaPorId(@PathVariable Long id) {
-        Vaga vaga = vagaRepository.findById(id)
-                .orElseThrow(() -> new VagaNotFoundException("Vaga não encontrada com o ID: " + id));
-        return ResponseEntity.ok(vaga);
+    public ResponseEntity<?> buscarVagaPorId(@PathVariable Long id) {
+        try {
+            Vaga vaga = vagaRepository.findById(id)
+                    .orElseThrow(() -> new VagaNotFoundException("Vaga não encontrada com o ID: " + id));
+            VagaDTO vagaDTO = convertToDTO(vaga);
+            return ResponseEntity.ok(vagaDTO);
+        } catch (VagaNotFoundException e) {
+            ErrorResponse errorResponse = new ErrorResponse("Vaga não encontrada", "Vaga não encontrada com o ID: " + id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        }
+    }
+
+    // Método para converter a entidade Vaga em um DTO VagaDTO
+    private VagaDTO convertToDTO(Vaga vaga) {
+        VagaDTO vagaDTO = new VagaDTO();
+        vagaDTO.setId(vaga.getId());
+        vagaDTO.setTituloVaga(vaga.getTituloVaga());
+        vagaDTO.setDataInicio(vaga.getDataInicio());
+        vagaDTO.setDataExpiracao(vaga.getDataExpiracao());
+        vagaDTO.setDescricaoVaga(vaga.getDescricaoVaga());
+        vagaDTO.setSalario(vaga.getSalario());
+        vagaDTO.setTotalDeCandidatosAplicado(vaga.getTotalDeCandidatosAplicado());
+        return vagaDTO;
     }
 
     @PutMapping("/{id}")
@@ -42,16 +84,15 @@ public class VagaController {
         Vaga vaga = vagaRepository.findById(id)
                 .orElseThrow(() -> new VagaNotFoundException("Vaga não encontrada com o ID: " + id));
 
-        // Atualizar os campos da vaga com os novos valores
         vaga.setTituloVaga(vagaAtualizada.getTituloVaga());
         vaga.setDataInicio(vagaAtualizada.getDataInicio());
         vaga.setDataExpiracao(vagaAtualizada.getDataExpiracao());
         vaga.setDescricaoVaga(vagaAtualizada.getDescricaoVaga());
         vaga.setSalario(vagaAtualizada.getSalario());
         vaga.setTotalDeCandidatosAplicado(vagaAtualizada.getTotalDeCandidatosAplicado());
-        // Atualize outros campos conforme necessário
 
         vagaAtualizada = vagaRepository.save(vaga);
+
         return ResponseEntity.ok(vagaAtualizada);
     }
 
@@ -65,14 +106,11 @@ public class VagaController {
     }
 
     @PostMapping("/{vagaId}/candidatar")
-    public ResponseEntity<String> candidatarAVaga(@PathVariable Long vagaId, @RequestBody Candidato candidato) {
-        Vaga vaga = vagaRepository.findById(vagaId)
-                .orElseThrow(() -> new VagaNotFoundException("Vaga não encontrada com o ID: " + vagaId));
+    public ResponseEntity<String> candidatarAVaga(@PathVariable Long vagaId) {
+        // Extrair CPF do token JWT
+        String cpf = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        // Adicionando o candidato à lista de candidatos da vaga
-        vaga.getCandidatos().add(candidato);
-        vagaRepository.save(vaga);
-
-        return ResponseEntity.ok("Candidato cadastrado na vaga com sucesso!");
+        String mensagem = vagaService.candidatarAVaga(vagaId, cpf);
+        return ResponseEntity.ok(mensagem);
     }
 }

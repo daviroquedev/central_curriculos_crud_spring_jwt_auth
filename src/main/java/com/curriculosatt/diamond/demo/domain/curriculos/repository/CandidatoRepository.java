@@ -1,4 +1,4 @@
-package com.curriculosatt.diamond.demo.domain.curriculos.Candidatos;
+package com.curriculosatt.diamond.demo.domain.curriculos.repository;
 
 import com.curriculosatt.diamond.demo.domain.curriculos.entity.Candidato;
 import org.springframework.data.jpa.repository.JpaRepository;

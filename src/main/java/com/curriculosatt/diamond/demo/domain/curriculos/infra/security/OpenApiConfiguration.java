@@ -15,6 +15,6 @@ public class OpenApiConfiguration {
         return new OpenAPI()
                 .components(new Components().addSecuritySchemes("bearerScheme",
                         new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
-                .info(new Info().title("API Docs").version("snapshot"));
+                .info(new Info().title("API Curriculos").version("snapshot"));
     }
 }

@@ -1,4 +1,4 @@
-package com.curriculosatt.diamond.demo.domain.curriculos.Candidatos;
+package com.curriculosatt.diamond.demo.domain.curriculos.infra.exceptions;
 
 public class CandidatoNotFoundException extends RuntimeException {
 
