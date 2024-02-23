@@ -38,6 +38,7 @@ public class TokenService {
     }
 
     public String validateToken(String token) {
+        System.out.println(token);
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
@@ -47,6 +48,7 @@ public class TokenService {
                     .getSubject();
         } catch (JWTVerificationException e) {
             throw new RuntimeException("Token inválido", e);
+
         }
     }
 

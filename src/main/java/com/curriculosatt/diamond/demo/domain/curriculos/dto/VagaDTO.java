@@ -38,6 +38,7 @@ public class VagaDTO {
     @Schema(example = "0")
     private Integer totalDeCandidatosAplicado;
 
+
 //    public void setCandidatos(List<Candidato> candidatos) {
 //    }
 }

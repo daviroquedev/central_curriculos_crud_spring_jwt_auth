@@ -1,6 +1,7 @@
 package com.curriculosatt.diamond.demo.domain.curriculos.entity;
 
 import com.curriculosatt.diamond.demo.domain.curriculos.enums.CandidatoRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -50,6 +51,7 @@ public class Candidato implements UserDetails {
     @Column(name = "status_solicitacao", nullable = false)
     private String statusSolicitacao;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "candidatos")
     private List<Vaga> vagas;
 
@@ -65,9 +67,12 @@ public class Candidato implements UserDetails {
     public Candidato(String cpf, String role) {
     }
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        Collection<? extends GrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        System.out.println("Authorities: " + authorities);
+        return authorities;
     }
 
     @Override

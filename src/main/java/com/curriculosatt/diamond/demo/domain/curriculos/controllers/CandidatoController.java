@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -31,11 +32,10 @@ public class CandidatoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(candidato);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<Candidato>> listarCandidatos() {
-        List<Candidato> candidatos = candidatoRepository.findAll();
-        return ResponseEntity.ok(candidatos);
+        List<Candidato> candidatos = candidatoRepository.findAllCandidatos();
+        return ResponseEntity.status(HttpStatus.OK).body(candidatos);
     }
 
     @GetMapping("/buscar")
