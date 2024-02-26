@@ -25,6 +25,8 @@ public record CandidatoDTO(Long id,
                                String statusSolicitacao,
                                CandidatoRole role
 
+                           //MODELMAPPER
+
 ) {
 
 }

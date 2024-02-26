@@ -68,4 +68,12 @@ public class CandidatoController {
         candidatoRepository.delete(candidato);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/gerenciarSolicitacao")
+    public ResponseEntity<Candidato> gerenciarSolicitacao(
+            @PathVariable Long id,
+            @RequestParam String status) {
+        Candidato candidato = candidatoService.atualizarStatusSolicitacao(id, status);
+        return ResponseEntity.ok(candidato);
+    }
 }
