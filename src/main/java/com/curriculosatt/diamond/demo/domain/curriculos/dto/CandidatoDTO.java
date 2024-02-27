@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
+
+import java.sql.Date;
 import java.util.List;
 
 public record CandidatoDTO(Long id,
@@ -14,7 +16,7 @@ public record CandidatoDTO(Long id,
                                @NotBlank
                                @Pattern(regexp = "\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}", message = "CPF deve estar no formato 999.999.999-99")
                                String cpf,
-                               String dataNascimento,
+                               Date dataNascimento,
                                @NotBlank
                                @Email
                                String email,

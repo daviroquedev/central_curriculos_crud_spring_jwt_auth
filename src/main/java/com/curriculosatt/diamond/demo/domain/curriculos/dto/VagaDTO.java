@@ -38,6 +38,9 @@ public class VagaDTO {
     @Schema(example = "0")
     private Integer totalDeCandidatosAplicado;
 
+    @Schema(example = "false")
+    private boolean candidatoJaCandidatou;
+
 
 //    public void setCandidatos(List<Candidato> candidatos) {
 //    }

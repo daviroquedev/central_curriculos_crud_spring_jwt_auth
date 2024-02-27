@@ -9,10 +9,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 
@@ -70,10 +68,12 @@ public class CandidatoController {
     }
 
     @PutMapping("/{id}/gerenciarSolicitacao")
-    public ResponseEntity<Candidato> gerenciarSolicitacao(
+    public ResponseEntity<String> gerenciarSolicitacao(
             @PathVariable Long id,
             @RequestParam String status) {
         Candidato candidato = candidatoService.atualizarStatusSolicitacao(id, status);
-        return ResponseEntity.ok(candidato);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Status da solicitação atualizado para: " + status);
     }
+
 }

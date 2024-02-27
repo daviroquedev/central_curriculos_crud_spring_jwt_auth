@@ -48,10 +48,30 @@ public class VagaController {
 
     @GetMapping
     public ResponseEntity<List<VagaDTO>> listarVagas() {
+        // Extrair CPF do token JWT
+        String cpf = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // Buscar todas as vagas do banco de dados
         List<Vaga> vagas = vagaRepository.findAll();
-        List<VagaDTO> vagasDTO = vagas.stream().map(this::convertToDTO).collect(Collectors.toList());
+
+        // Converter as vagas para DTOs
+        List<VagaDTO> vagasDTO = vagas.stream().map(vaga -> {
+            // Verificar se o candidato já se candidatou a esta vaga
+            boolean candidatoJaCandidatou = vaga.getCandidatos().stream()
+                    .anyMatch(candidato -> candidato.getCpf().equals(cpf));
+
+            // Converter a vaga para DTO
+            VagaDTO vagaDTO = convertToDTO(vaga);
+
+            // Definir um atributo no DTO para indicar se o candidato já se candidatou a esta vaga
+            vagaDTO.setCandidatoJaCandidatou(candidatoJaCandidatou);
+
+            return vagaDTO;
+        }).collect(Collectors.toList());
+
         return ResponseEntity.ok(vagasDTO);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarVagaPorId(@PathVariable Long id) {

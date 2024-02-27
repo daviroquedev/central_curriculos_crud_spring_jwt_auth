@@ -20,7 +20,7 @@ public class CandidatoService {
         candidato.setNome(candidatoDTO.nome());
         candidato.setCpf(candidatoDTO.cpf());
         candidato.setEmail(candidatoDTO.email());
-        candidato.setDataNascimento(Date.valueOf(candidatoDTO.dataNascimento()));
+        candidato.setDataNascimento(candidatoDTO.dataNascimento());
         candidato.setTelefone(candidatoDTO.telefone());
         candidato.setEscolaridade(candidatoDTO.escolaridade() != null ? candidatoDTO.escolaridade().name() : null);
         candidato.setFuncao(candidatoDTO.funcao());
@@ -50,6 +50,5 @@ public class CandidatoService {
         // Salvar e retornar o candidato atualizado
         return candidatoRepository.save(candidato);
     }
-
 
 }

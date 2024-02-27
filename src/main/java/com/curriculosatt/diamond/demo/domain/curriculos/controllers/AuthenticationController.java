@@ -126,7 +126,7 @@ public class AuthenticationController {
         newUser.setNome(data.nome());
         newUser.setCpf(data.cpf());
         newUser.setEmail(data.email());
-        newUser.setDataNascimento(data.dataNascimento() != null ? Date.valueOf(data.dataNascimento()) : null);
+        newUser.setDataNascimento(data.dataNascimento() != null ? data.dataNascimento() : null);
         newUser.setTelefone(data.telefone());
         newUser.setEscolaridade(escolaridade.toString());
         newUser.setFuncao(data.funcao());
