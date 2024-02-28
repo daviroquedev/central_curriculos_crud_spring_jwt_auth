@@ -1,7 +1,10 @@
 package com.curriculosatt.diamond.demo.domain.curriculos.controllers;
 
+import com.curriculosatt.diamond.demo.domain.curriculos.dto.CandidatoDTO;
 import com.curriculosatt.diamond.demo.domain.curriculos.dto.VagaDTO;
+import com.curriculosatt.diamond.demo.domain.curriculos.entity.Candidato;
 import com.curriculosatt.diamond.demo.domain.curriculos.entity.Vaga;
+import com.curriculosatt.diamond.demo.domain.curriculos.infra.exceptions.CandidatoNotFoundException;
 import com.curriculosatt.diamond.demo.domain.curriculos.infra.exceptions.ErrorResponse;
 import com.curriculosatt.diamond.demo.domain.curriculos.infra.exceptions.VagaNotFoundException;
 import com.curriculosatt.diamond.demo.domain.curriculos.repository.CandidatoRepository;
@@ -132,5 +135,22 @@ public class VagaController {
 
         String mensagem = vagaService.candidatarAVaga(vagaId, cpf);
         return ResponseEntity.ok(mensagem);
+    }
+
+    @GetMapping("/candidato/{id}")
+    public ResponseEntity<List<VagaDTO>> listarVagasDoUsuario(@PathVariable Long id) {
+        // Buscar candidato pelo ID do usuário
+        Candidato candidato = candidatoRepository.findById(id)
+                .orElseThrow(() -> new CandidatoNotFoundException("Candidato não encontrado com o ID: " + id));
+
+        // Extrair vagas associadas ao candidato
+        List<Vaga> vagasDoUsuario = candidato.getVagas();
+
+        // Converter as vagas para DTOs
+        List<VagaDTO> vagasDTO = vagasDoUsuario.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(vagasDTO);
     }
 }
