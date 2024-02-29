@@ -21,7 +21,7 @@ public class CandidatoResponseDTO {
     private Map<String, Integer> competencias;
     private String statusSolicitacao;
 
-    public CandidatoResponseDTO(Long id, String nome, String cpf, String email, String telefone, Map<String, Integer> competencias, String statusSolicitacao, String escolaridade, String funcao) {
+    public CandidatoResponseDTO(Long id, String nome, String cpf, String email, String telefone, Map<String, Integer> competencias, String statusSolicitacao, String funcao, String escolaridade) {
         this.id = id;
         this.nome = nome;
         this.escolaridade = escolaridade;
