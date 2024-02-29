@@ -1,5 +1,6 @@
 package com.curriculosatt.diamond.demo.domain.curriculos.controllers;
 
+import com.curriculosatt.diamond.demo.domain.curriculos.dto.CandidatoResponseDTO;
 import com.curriculosatt.diamond.demo.domain.curriculos.entity.Candidato;
 import com.curriculosatt.diamond.demo.domain.curriculos.infra.exceptions.CandidatoNotFoundException;
 import com.curriculosatt.diamond.demo.domain.curriculos.repository.CandidatoRepository;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -23,6 +25,7 @@ public class CandidatoController {
     private final CandidatoRepository candidatoRepository;
     private final CandidatoService candidatoService;
 
+
     @PostMapping
     public ResponseEntity<Candidato> criarCandidato(@Valid @RequestBody CandidatoDTO candidatoDTO) {
         Candidato candidato = candidatoService.convertToEntity(candidatoDTO);
@@ -31,9 +34,21 @@ public class CandidatoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Candidato>> listarCandidatos() {
+    public ResponseEntity<List<CandidatoResponseDTO>> listarCandidatos() {
         List<Candidato> candidatos = candidatoRepository.findAllCandidatos();
-        return ResponseEntity.status(HttpStatus.OK).body(candidatos);
+        List<CandidatoResponseDTO> candidatosResponse = new ArrayList<>();
+        for (Candidato candidato : candidatos) {
+            candidatosResponse.add(new CandidatoResponseDTO(
+                    candidato.getId(),
+                    candidato.getNome(),
+                    candidato.getCpf(),
+                    candidato.getEmail(),
+                    candidato.getTelefone(),
+                    candidato.getCompetencias(),
+                    candidato.getStatusSolicitacao()
+            ));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(candidatosResponse);
     }
 
     @GetMapping("/buscar")

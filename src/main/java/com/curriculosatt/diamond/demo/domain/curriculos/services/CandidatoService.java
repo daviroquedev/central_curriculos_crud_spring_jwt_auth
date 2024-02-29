@@ -1,5 +1,6 @@
 package com.curriculosatt.diamond.demo.domain.curriculos.services;
 
+import com.curriculosatt.diamond.demo.domain.curriculos.dto.CompetenciaDTO;
 import com.curriculosatt.diamond.demo.domain.curriculos.entity.Candidato;
 import com.curriculosatt.diamond.demo.domain.curriculos.enums.CandidatoRole;
 import com.curriculosatt.diamond.demo.domain.curriculos.dto.CandidatoDTO;
@@ -9,6 +10,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,9 +30,16 @@ public class CandidatoService {
         candidato.setTelefone(candidatoDTO.telefone());
         candidato.setEscolaridade(candidatoDTO.escolaridade() != null ? candidatoDTO.escolaridade().name() : null);
         candidato.setFuncao(candidatoDTO.funcao());
-        candidato.setListaCompetencias(candidatoDTO.listaCompetencias());
         candidato.setStatusSolicitacao(candidatoDTO.statusSolicitacao());
         candidato.setRole(candidatoDTO.role() != null ? candidatoDTO.role() : CandidatoRole.USER);
+
+        // Mapeando as competências corretamente
+        List<CompetenciaDTO> competenciasDTO = candidatoDTO.competencias();
+        Map<String, Integer> competencias = new HashMap<>();
+        for (CompetenciaDTO competenciaDTO : competenciasDTO) {
+            competencias.put(competenciaDTO.getCompetencia(), competenciaDTO.getNivel_proficiencia());
+        }
+        candidato.setCompetencias(competencias);
 
         return candidato;
     }

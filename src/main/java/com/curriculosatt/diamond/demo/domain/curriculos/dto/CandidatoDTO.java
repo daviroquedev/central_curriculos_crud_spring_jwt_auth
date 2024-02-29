@@ -23,9 +23,9 @@ public record CandidatoDTO(Long id,
                                String telefone,
                                Escolaridade escolaridade,
                                String funcao,
-                               List<String> listaCompetencias,
-                               String statusSolicitacao,
-                               CandidatoRole role
+                                List<CompetenciaDTO> competencias,
+                                String statusSolicitacao,
+                                CandidatoRole role
 
                            //MODELMAPPER
 

@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Table(name = "candidato")
 @Entity(name="candidato")
@@ -45,8 +46,10 @@ public class Candidato implements UserDetails {
 
     @ElementCollection
     @CollectionTable(name = "competencias", joinColumns = @JoinColumn(name = "candidato_id"))
-    @Column(name = "competencia")
-    private List<String> listaCompetencias;
+    @MapKeyColumn(name = "competencia")
+    @Column(name = "nivel_proficiencia")
+    private Map<String, Integer> competencias;
+
 
     @Column(name = "status_solicitacao", nullable = false)
     private String statusSolicitacao;

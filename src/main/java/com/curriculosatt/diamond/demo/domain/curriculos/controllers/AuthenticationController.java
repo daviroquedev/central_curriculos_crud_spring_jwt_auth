@@ -1,5 +1,6 @@
 package com.curriculosatt.diamond.demo.domain.curriculos.controllers;
 
+import com.curriculosatt.diamond.demo.domain.curriculos.dto.CompetenciaDTO;
 import com.curriculosatt.diamond.demo.domain.curriculos.enums.CandidatoRole;
 import com.curriculosatt.diamond.demo.domain.curriculos.dto.AuthDTO;
 import com.curriculosatt.diamond.demo.domain.curriculos.dto.CandidatoDTO;
@@ -23,6 +24,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
@@ -91,11 +95,16 @@ public class AuthenticationController {
     }
 
     private CandidatoRole getRole(CandidatoDTO data) {
-        try {
-            return CandidatoRole.fromString(String.valueOf(data.role()));
-        } catch (IllegalArgumentException e) {
-            // Se o papel não estiver nos valores permitidos, lançar uma resposta indicando que deve estar no enum
-            throw new IllegalArgumentException("O papel (role) deve estar entre os valores permitidos.");
+        if (data.role() != null ) {
+            try {
+                return CandidatoRole.fromString(String.valueOf(data.role()));
+            } catch (IllegalArgumentException e) {
+                // Se o papel não estiver nos valores permitidos, lançar uma resposta indicando que deve estar no enum
+                throw new IllegalArgumentException("O papel (role) deve estar entre os valores permitidos.");
+            }
+        } else {
+            // Se não for fornecido, defina a role como USER
+            return CandidatoRole.USER;
         }
     }
 
@@ -130,10 +139,16 @@ public class AuthenticationController {
         newUser.setTelefone(data.telefone());
         newUser.setEscolaridade(escolaridade.toString());
         newUser.setFuncao(data.funcao());
-        newUser.setListaCompetencias(data.listaCompetencias());
+
+        // Mapeando as competências corretamente
+        Map<String, Integer> competencias = data.competencias().stream()
+                .collect(Collectors.toMap(CompetenciaDTO::getCompetencia, CompetenciaDTO::getNivel_proficiencia));
+        newUser.setCompetencias(competencias);
+
         newUser.setStatusSolicitacao(data.statusSolicitacao());
         newUser.setRole(role);
 
         return newUser;
     }
+
 }
