@@ -45,7 +45,9 @@ public class CandidatoController {
                     candidato.getEmail(),
                     candidato.getTelefone(),
                     candidato.getCompetencias(),
-                    candidato.getStatusSolicitacao()
+                    candidato.getStatusSolicitacao(),
+                    candidato.getFuncao(),
+                    candidato.getEscolaridade()
             ));
         }
         return ResponseEntity.status(HttpStatus.OK).body(candidatosResponse);
