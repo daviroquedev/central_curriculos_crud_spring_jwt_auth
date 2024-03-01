@@ -44,6 +44,7 @@ public class CandidatoService {
         return candidato;
     }
 
+
     public Candidato findById(Long id) {
         return candidatoRepository.findById(id)
                 .orElseThrow(() -> new CandidatoNotFoundException("Candidato não encontrado com o ID: " + id));

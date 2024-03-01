@@ -21,4 +21,6 @@ public interface CandidatoRepository extends JpaRepository<Candidato, Long> {
     List<Candidato> findAllCandidatos();
 
     UserDetails findByCpf(String cpf);
+
+    boolean existsByIdAndCpf(Long id, String cpf);
 }

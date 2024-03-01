@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -93,4 +94,41 @@ public class CandidatoController {
         return ResponseEntity.status(HttpStatus.OK).body("Status da solicitação atualizado para: " + status);
     }
 
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<Candidato> attCandidato(@PathVariable Long id,
+                                                        @Valid @RequestBody CandidatoDTO candidatoDTO, Authentication authentication) {
+
+        String username = authentication.getName();
+
+        if (!candidatoRepository.existsByIdAndCpf(id, username)) {
+            System.out.println("Não é o proprietário");
+
+            // Se não for o proprietário, retorna um erro de autorização
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(null); // Retorne qualquer coisa aqui, já que o corpo não será utilizado
+        }
+
+        System.out.println("É o proprietário");
+        Candidato candidato = candidatoService.convertToEntity(candidatoDTO);
+        candidato.setId(id);
+        candidato = candidatoRepository.save(candidato);
+        System.out.println("Candidato atualizado");
+        return ResponseEntity.ok(candidato);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<Candidato> getUsuarioLogado(Authentication authentication) {
+        // Obtém o CPF do usuário autenticado
+        String cpf = authentication.getName();
+
+        // Busca o usuário pelo CPF
+        Candidato candidato = (Candidato) candidatoRepository.findByCpf(cpf);
+
+        // Verifica se o candidato foi encontrado
+        if (candidato == null) {
+            throw new CandidatoNotFoundException("Usuário não encontrado com o CPF: " + cpf);
+        }
+
+        return ResponseEntity.ok(candidato);
+    }
 }
